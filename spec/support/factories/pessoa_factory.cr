@@ -1,6 +1,6 @@
 class PessoaFactory < Avram::Factory
   def initialize
-    apelido "José"
+    apelido "zezinho"
     nome "José Roberto"
     nascimento Time.local
     stack "ruby, javascript, php"
