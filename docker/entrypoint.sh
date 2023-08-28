@@ -34,7 +34,7 @@ if ! shards check ; then
 fi
 
 echo "Waiting for postgres to be available..."
-/app/docker/wait-for-it.sh -q postgres:5432
+/app/docker/wait-for-it.sh -q pgbouncer:5432
 
 if ! psql -d "$DATABASE_URL" -c '\d migrations' > /dev/null ; then
   echo "Finishing database setup..."
