@@ -3,7 +3,7 @@ class CreatePessoas::V20230827151308 < Avram::Migrator::Migration::V1
     # Learn about migrations at: https://luckyframework.org/guides/database/migrations
     create table_for(Pessoa) do
       primary_key id : UUID
-      add_timestamps
+
       add apelido : String, unique: true
       add nome : String
       add nascimento : Time
@@ -21,6 +21,7 @@ class CreatePessoas::V20230827151308 < Avram::Migrator::Migration::V1
   end
 
   def rollback
+    disable_extension "pg_trgm"
     drop table_for(Pessoa)
   end
 end

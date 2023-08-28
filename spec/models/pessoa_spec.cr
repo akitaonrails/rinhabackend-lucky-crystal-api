@@ -13,6 +13,11 @@ describe SavePessoa do
       PessoaFactory.create
     end
 
+    it "should be nil" do
+      pessoa = PessoaQuery.new.id(UUID.new("123e4567-e89b-12d3-a456-426655440000")).first?
+      pessoa.should be_nil
+    end
+
     it "should find partial nome" do
       pessoa = PessoaQuery.search("berto").first
       pessoa.nome.should eq("José Roberto")
