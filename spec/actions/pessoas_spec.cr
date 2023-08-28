@@ -32,3 +32,21 @@ describe Api::Pessoas::Show do
     result["nome"].should eq "José Roberto"
   end
 end
+
+describe Api::Pessoas::Create do
+  it "should create new pessoa" do
+    response = ApiClient.exec(Api::Pessoas::Create, pessoa: {
+      apelido: "ana", nome: "Ana Barbosa",
+      nascimento: "2000-01-01", stack: ["php", "python"]})
+    response.status.should eq HTTP::Status::CREATED
+  end
+end
+
+describe Api::Pessoas::Count do
+  it "should return correct db count" do
+    PessoaFactory.create
+    response = ApiClient.exec(Api::Pessoas::Count)
+    response.status.should eq HTTP::Status::OK
+    response.body.should eq "1"
+  end
+end
