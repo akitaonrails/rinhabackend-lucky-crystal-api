@@ -4,7 +4,7 @@ class AppServer < Lucky::BaseAppServer
   def middleware : Array(HTTP::Handler)
     [
       Lucky::RequestIdHandler.new,
-      Lucky::ForceSSLHandler.new,
+      #Lucky::ForceSSLHandler.new,
       Lucky::HttpMethodOverrideHandler.new,
       Lucky::LogHandler.new,
       Lucky::ErrorHandler.new(action: Errors::Show),

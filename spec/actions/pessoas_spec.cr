@@ -35,10 +35,11 @@ end
 
 describe Api::Pessoas::Create do
   it "should create new pessoa" do
-    response = ApiClient.exec(Api::Pessoas::Create, pessoa: {
+    response = ApiClient.exec(Api::Pessoas::Create,
       apelido: "ana", nome: "Ana Barbosa",
-      nascimento: "2000-01-01", stack: ["php", "python"]})
+      nascimento: "2000-01-01", stack: ["php", "python"])
     response.status.should eq HTTP::Status::CREATED
+    response.headers["Location"].should match %r{/pessoas/[0-9a-f-]{36}}
   end
 end
 

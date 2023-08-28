@@ -1,4 +1,4 @@
-FROM crystallang/crystal:1.9.2
+FROM docker.io/crystallang/crystal:1.9.2
 
 # Install utilities required to make this Dockerfile run
 RUN apt-get update && \

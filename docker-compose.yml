@@ -1,48 +1,71 @@
-version: '3.8'
+version: '3.5'
 services:
-  lucky:
-    build:
-      context: .
-      dockerfile: docker/development.dockerfile
+  api1: &api
+    image: docker.io/akitaonrails/rinhabackend-crystal:latest
     environment:
-      DATABASE_URL: postgres://lucky:password@postgres:5432/lucky
+      DATABASE_URL: postgres://postgres:password@postgres:5432/postgres?initial_pool_size=10&max_pool_size=25
       DEV_HOST: "0.0.0.0"
-    volumes:
-      - type: bind
-        source: .
-        target: /app
-      - type: volume
-        source: node_modules
-        target: /app/node_modules
-      - type: volume
-        source: shards_lib
-        target: /app/lib
+    hostname: api1
     depends_on:
       - postgres
+    expose:
+      - "3000"
+    ulimits:
+      nproc: 1000000
+      nofile:
+        soft: 1000000
+        hard: 1000000
+    deploy:
+      resources:
+        limits:
+          cpus: '0.4'
+          memory: '0.5GB'
+
+  api2:
+    <<: *api
+    hostname: api2
+
+  nginx: # Load Balancer
+    image: docker.io/nginx:latest
+    command: ["nginx", "-g", "daemon off;"]
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - api1
+      - api2
     ports:
-      - 3000:3000 # This is the Lucky Server port
-      - 3001:3001 # This is the Lucky watcher reload port
+      - "9999:9999"
+    ulimits:
+      nproc: 1000000
+      nofile:
+        soft: 1000000
+        hard: 1000000
+    deploy:
+      resources:
+        limits:
+          cpus: '0.10'
+          memory: '0.3GB'
 
-    entrypoint: ["docker/dev_entrypoint.sh"]
-
-  postgres:
-    image: postgres:14-alpine
+  postgres: # Banco de dados
+    image: docker.io/postgres
     environment:
-      POSTGRES_USER: lucky
       POSTGRES_PASSWORD: password
     volumes:
-      - type: volume
-        source: postgres_data
-        target: /var/lib/postgresql
-    ports:
-      # The postgres database container is exposed on the host at port 6543 to
-      # allow connecting directly to it with postgres clients. The port differs
-      # from the postgres default to avoid conflict with existing postgres
-      # servers. Connect to a running postgres container with:
-      # postgres://lucky:password@localhost:6543/lucky
-      - 6543:5432
-
-volumes:
-  postgres_data:
-  node_modules:
-  shards_lib:
+      - ./postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    ulimits:
+      nproc: 1000000
+      nofile:
+        soft: 1000000
+        hard: 1000000
+    deploy:
+      resources:
+        limits:
+          cpus: '0.60'
+          memory: '1.7GB'
