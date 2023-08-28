@@ -41,5 +41,6 @@ if ! psql -d "$DATABASE_URL" -c '\d migrations' > /dev/null ; then
   lucky db.reset
 fi
 
-echo "Starting lucky dev server..."
+echo "Starting lucky PROD server..."
+export LUCKY_ENV=production
 /app/bin/app

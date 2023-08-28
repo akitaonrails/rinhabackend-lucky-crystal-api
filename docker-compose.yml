@@ -6,7 +6,12 @@ services:
     environment:
       DATABASE_URL: postgres://postgres:password@pgbouncer:5432/postgres
       DEV_HOST: "0.0.0.0"
+      PORT: 3000
+      LUCKY_ENV: production
       APP_DOMAIN: http://0.0.0.0:9999
+      # the following keys are bogus, just so lucky don't complain on startup
+      SECRET_KEY_BASE: 31IAERHMv/PendY5eVzMXQ5DfpjgxQ80gZyzEturFWk=
+      SEND_GRID_KEY: 8LsM0faiYM2Ydw/de19PBRwkuPW3wETnzj0CY9wsxjA=
     volumes:
       - type: volume
         source: shards_lib
@@ -25,7 +30,7 @@ services:
       resources:
         limits:
           cpus: '0.30'
-          memory: '0.2GB'
+          memory: '0.25GB'
 
   api2:
     <<: *api
@@ -76,16 +81,16 @@ services:
       resources:
         limits:
           cpus: '0.70'
-          memory: '2.1GB'
+          memory: '2.0GB'
 
   pgbouncer:
     image: docker.io/edoburu/pgbouncer:latest
     environment:
       - DATABASE_URL=postgres://postgres:password@postgres:5432/postgres
       - ADMIN_USERS=postgres,admin
-      - POOL_MODE=session
-      - MAX_CLIENT_CONN=200
-      - DEFAULT_POOL_SIZE=100
+      - POOL_MODE=transaction
+      - MAX_CLIENT_CONN=100
+      - DEFAULT_POOL_SIZE=25
     ports:
       - "5432:5432"
     depends_on:
