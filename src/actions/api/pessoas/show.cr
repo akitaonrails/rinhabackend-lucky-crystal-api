@@ -13,7 +13,7 @@ class Api::Pessoas::Show < ApiAction
     begin
       return UUID.new(pessoa_id)
     rescue exception
-      raise BadRequestError.new("invalid uuid")
+      raise BadRequestError.new("invalid uuid - #{pessoa_id}")
     end
   end
 end

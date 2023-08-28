@@ -16,7 +16,6 @@ elsif LuckyEnv.production?
   # backend.formatter = Dexter::JSONLogFormatter.proc
   backend.formatter = Lucky::PrettyLogFormatter.proc
   Log.dexter.configure(:fatal, backend)
-  DB::Log.level = :warn
 else
   # Use a pretty formatter printing to STDOUT in development
   backend = Log::IOBackend.new
