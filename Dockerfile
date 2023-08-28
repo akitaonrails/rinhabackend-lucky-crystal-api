@@ -27,11 +27,14 @@ COPY ./config /app/config
 COPY ./src /app/src
 COPY ./db /app/db
 COPY ./docker /app/docker
+COPY ./tasks.cr /app/tasks.cr
+COPY ./tasks /app/tasks
+COPY ./spec /app/spec
 
 RUN shards check || shards install
 RUN shards build --production
 
-ENV DATABASE_URL=postgres://postgres:postgres@host.docker.internal:5432/postgres
+ENV DATABASE_URL=postgres://postgres:password@postgres:5432/postgres
 EXPOSE 3000
 
 CMD ["./docker/entrypoint.sh"]

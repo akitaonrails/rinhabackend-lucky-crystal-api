@@ -4,15 +4,16 @@ services:
     #image: docker.io/akitaonrails/rinhabackend-crystal:latest
     build: .
     environment:
-      DATABASE_URL: postgres://postgres:password@postgres:5432/postgres?initial_pool_size=10&max_pool_size=25
+      DATABASE_URL: postgres://postgres:password@pgbouncer:5432/postgres
       DEV_HOST: "0.0.0.0"
+      APP_DOMAIN: http://0.0.0.0:9999
     volumes:
       - type: volume
         source: shards_lib
         target: /app/lib
     hostname: api1
     depends_on:
-      - postgres
+      - pgbouncer
     expose:
       - "3000"
     ulimits:
@@ -23,8 +24,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.4'
-          memory: '0.5GB'
+          cpus: '0.30'
+          memory: '0.2GB'
 
   api2:
     <<: *api
@@ -55,8 +56,11 @@ services:
     image: docker.io/postgres
     environment:
       POSTGRES_PASSWORD: password
+      POSTGRES_HOST_AUTH_METHOD: md5
+      POSTGRES_INITDB_ARGS: --auth=md5
     volumes:
       - ./postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready"]
       interval: 5s
@@ -71,8 +75,26 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.60'
-          memory: '1.7GB'
+          cpus: '0.70'
+          memory: '2.1GB'
+
+  pgbouncer:
+    image: docker.io/edoburu/pgbouncer:latest
+    environment:
+      - DATABASE_URL=postgres://postgres:password@postgres:5432/postgres
+      - ADMIN_USERS=postgres,admin
+      - POOL_MODE=session
+      - MAX_CLIENT_CONN=200
+      - DEFAULT_POOL_SIZE=100
+    ports:
+      - "5432:5432"
+    depends_on:
+      - postgres
+    deploy:
+      resources:
+        limits:
+          cpus: '0.10'
+          memory: '0.2GB'
 
 volumes:
   shards_lib:
