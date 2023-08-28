@@ -1,6 +1,6 @@
 class Api::Pessoas::Show < ApiAction
   get "/pessoas/:pessoa_id" do
-    pessoa = PessoaQuery.new.id(generate_uuid).first?
+    pessoa = PessoaQuery.new.id(cast_uuid).first?
 
     if pessoa.nil?
       raise NotFoundError.new("Pessoa not found")
@@ -9,7 +9,7 @@ class Api::Pessoas::Show < ApiAction
     end
   end
 
-  def generate_uuid
+  def cast_uuid
     begin
       return UUID.new(pessoa_id)
     rescue exception
