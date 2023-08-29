@@ -1,6 +1,17 @@
 require "../spec_helper"
 
 describe SavePessoa do
+  describe "should cast values" do
+    pessoa = Pessoa.from_hash({ id: UUID.random, apelido: "foo", nome: "bar", nascimento: nil, stack: nil })
+    pessoa.apelido.should eq "foo"
+
+    pessoa.nascimento_as_string = "2001-02-01"
+    pessoa.nascimento.should eq Time.local(2001, 2, 1)
+
+    pessoa.stack = "[\"php\", \"java\"]"
+    pessoa.stack_as_array.should eq ["php", "java"]
+  end
+
   describe "validations" do
     it "is invalid if apelido is too long" do
       operation = SavePessoa.new(apelido: "abcdefghijklmnopqrstuvwxyz0123456789")
@@ -30,7 +41,7 @@ describe SavePessoa do
 
     it "should find one of the stack elements" do
       pessoa = PessoaQuery.search("ruby").first
-      pessoa.stack.should contain("java")
+      pessoa.stack.try &.should contain("java")
     end
   end
 end

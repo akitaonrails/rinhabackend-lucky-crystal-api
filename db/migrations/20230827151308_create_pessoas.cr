@@ -6,17 +6,14 @@ class CreatePessoas::V20230827151308 < Avram::Migrator::Migration::V1
 
       add apelido : String, unique: true
       add nome : String
-      add nascimento : Time
-      add stack : String
+      add nascimento : Time?
+      add stack : String?
     end
 
     enable_extension "pg_trgm"
 
     execute <<-SQL
-    ALTER TABLE pessoas
-      ADD searchable text GENERATED ALWAYS AS (
-          nome || ' ' || apelido || ' ' || COALESCE(stack::text, ' ')
-      ) STORED;
+    CREATE INDEX pessoas_search_idx ON pessoas USING gin (apelido gin_trgm_ops, nome gin_trgm_ops, stack gin_trgm_ops);
     SQL
   end
 

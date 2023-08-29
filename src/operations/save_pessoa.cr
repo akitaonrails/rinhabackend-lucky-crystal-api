@@ -10,21 +10,12 @@ class SavePessoa < Pessoa::SaveOperation
   before_save do
     validate_required apelido
     validate_required nome
+
     validate_size_of apelido, max: 32
     validate_size_of nome, max: 100
-    convert_stack
-    convert_nascimento
   end
 
-  def convert_stack
-    value = stack_as_string.value || ""
-    return if value.empty?
-    stack.value = Array(String).from_json(value).join(",")
-  end
-
-  def convert_nascimento
-    value = nascimento_as_string.value || ""
-    return if value.empty?
-    nascimento.value = Time.parse(value, "%Y-%m-%d", Time::Location.local)
+  def self.from_tuple(tuple : PessoaTuple)
+    new(id: tuple[:id], apelido: tuple[:apelido], nome: tuple[:nome], nascimento: tuple[:nascimento], stack: tuple[:stack])
   end
 end

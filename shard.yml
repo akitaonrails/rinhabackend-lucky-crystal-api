@@ -15,8 +15,8 @@ dependencies:
     github: luckyframework/lucky
     version: ~> 1.0.0
   avram:
-    github: luckyframework/avram
-    version: ~> 1.0.0
+    github: akitaonrails/avram
+    branch: main
   carbon:
     github: luckyframework/carbon
     version: ~> 0.3.0
@@ -29,3 +29,7 @@ dependencies:
   lucky_task:
     github: luckyframework/lucky_task
     version: ~> 0.1.1
+  pulsar:
+    github: luckyframework/pulsar
+  lucky_cache:
+    github: luckyframework/lucky_cache
