@@ -4,7 +4,8 @@ services:
     #image: docker.io/akitaonrails/rinhabackend-crystal:latest
     build: .
     environment:
-      DATABASE_URL: postgres://postgres:password@pgbouncer:5432/postgres
+      DATABASE_URL: postgres://postgres:password@postgres:5432/postgres
+      MAX_POOL_SIZE: 45
       DEV_HOST: "0.0.0.0"
       PORT: 3000
       LUCKY_ENV: production
@@ -18,7 +19,7 @@ services:
         target: /app/lib
     hostname: api1
     depends_on:
-      - pgbouncer
+      - postgres
     expose:
       - "3000"
     ulimits:
@@ -80,26 +81,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.8'
-          memory: '1.8GB'
-
-  pgbouncer:
-    image: docker.io/edoburu/pgbouncer:latest
-    environment:
-      - DATABASE_URL=postgres://postgres:password@postgres:5432/postgres
-      - ADMIN_USERS=postgres,admin
-      - POOL_MODE=transaction
-      - MAX_CLIENT_CONN=1000
-      - DEFAULT_POOL_SIZE=95
-    ports:
-      - "5432:5432"
-    depends_on:
-      - postgres
-    deploy:
-      resources:
-        limits:
-          cpus: '0.2'
-          memory: '0.1GB'
+          cpus: '1'
+          memory: '1.9GB'
 
 volumes:
   shards_lib:

@@ -34,7 +34,7 @@ if ! shards check ; then
 fi
 
 echo "Waiting for postgres to be available..."
-/app/docker/wait-for-it.sh -q pgbouncer:5432
+/app/docker/wait-for-it.sh -q postgres:5432
 
 if ! psql -d "$DATABASE_URL" -c '\d migrations' > /dev/null ; then
   echo "Finishing database setup..."
@@ -43,4 +43,8 @@ fi
 
 echo "Starting lucky PROD server..."
 export LUCKY_ENV=production
+if [[ -n "$MAX_POOL_SIZE" ]]; then
+  export DATABASE_URL=$DATABASE_URL?max_pool_size=$MAX_POOL_SIZE
+  echo "connecting to $DATABASE_URL"
+fi
 /app/bin/app
