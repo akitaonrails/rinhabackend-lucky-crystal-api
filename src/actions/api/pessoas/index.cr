@@ -5,7 +5,7 @@ class Api::Pessoas::Index < ApiAction
     if term.nil?
       raise BadRequestError.new("must have parameter 't'")
     else
-      query = PessoaQuery.search(term)
+      query = PessoaQuery.search(term).map { |item| item }
       json(PessoaSerializer.for_collection(query))
     end
   end

@@ -3,8 +3,10 @@ class Api::Pessoas::Show < ApiAction
 
   get "/pessoas/:pessoa_id" do
     cast_uuid = UUID.new(pessoa_id)
+
     json_pessoa = CACHE.fetch(cast_uuid.to_s, as: String) do
       pessoa = PessoaQuery.new.id(cast_uuid).first?
+
       if pessoa.nil?
         fetch_from_other_server(pessoa_id)
       else

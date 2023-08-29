@@ -28,18 +28,18 @@ if ! [ -d bin ] ; then
   echo "Creating bin directory"
   mkdir bin
 fi
-if ! shards check ; then
-  echo "Installing shards..."
-  shards install
-fi
+# if ! shards check ; then
+#   echo "Installing shards..."
+#   shards install
+# fi
 
-echo "Waiting for postgres to be available..."
-/app/docker/wait-for-it.sh -q postgres:5432
+# echo "Waiting for postgres to be available..."
+# /app/docker/wait-for-it.sh -q postgres:5432
 
-if ! psql -d "$DATABASE_URL" -c '\d migrations' > /dev/null ; then
-  echo "Finishing database setup..."
-  lucky db.reset
-fi
+# if ! psql -d "$DATABASE_URL" -c '\d migrations' > /dev/null ; then
+#   echo "Finishing database setup..."
+#   lucky db.reset
+# fi
 
 echo "Starting lucky PROD server..."
 export LUCKY_ENV=production

@@ -3,6 +3,6 @@ class PessoaFactory < Avram::Factory
     apelido "zezinho"
     nome "José Roberto"
     nascimento Time.local
-    stack "ruby, javascript, php"
+    stack "[\"ruby\", \"javascript\", \"php\"]"
   end
 end

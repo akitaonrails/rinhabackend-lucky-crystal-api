@@ -1,5 +1,8 @@
 class PessoaQuery < Pessoa::BaseQuery
   def self.search(term)
-    new.apelido.ilike("%#{term}%").or(&.nome.ilike("%#{term}%")).or(&.stack.ilike("%#{term}%"))
+    query = "%#{term}%"
+    new.apelido.ilike(query).
+      or(&.nome.ilike(query)).
+      or(&.stack.ilike(query))
   end
 end
