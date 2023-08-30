@@ -15,15 +15,15 @@ class BatchInsertEvent < Pulsar::Event
     @@buffer.push pessoa
   end
 
-  def pop : PessoaTuple
-    @@buffer.pop
+  def shift : PessoaTuple
+    @@buffer.shift
   end
 
   def bulk_pop(batch_size = 10)
     tmp_buffer = [] of SavePessoa
     counter = 10
     while counter > 0 && !@@buffer.empty?
-      operation = SavePessoa.from_tuple(pop)
+      operation = SavePessoa.from_tuple(shift)
 
       if operation.valid?
         tmp_buffer.push(operation)

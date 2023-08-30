@@ -23,7 +23,11 @@ class Pessoa < BaseModel
   end
 
   def stack_as_array : Array(String)
-    Array(String).from_json(self.stack || "[]")
+    begin
+      Array(String).from_json(self.stack || "[]")
+    rescue
+      [] of String
+    end
   end
 
   def self.from_hash(hash)

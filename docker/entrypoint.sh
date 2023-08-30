@@ -45,6 +45,7 @@ echo "Starting lucky PROD server..."
 export LUCKY_ENV=production
 if [[ -n "$MAX_POOL_SIZE" ]]; then
   export DATABASE_URL=$DATABASE_URL?max_pool_size=$MAX_POOL_SIZE
-  echo "connecting to $DATABASE_URL"
 fi
+
+echo "connecting to $DATABASE_URL"
 /app/bin/app
