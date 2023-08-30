@@ -1,10 +1,3 @@
-alias PessoaTuple = NamedTuple(
-  id: UUID,
-  apelido: String,
-  nome: String,
-  nascimento: Time?,
-  stack: String?)
-
 class Pessoa < BaseModel
   table do
     column apelido : String
@@ -30,14 +23,14 @@ class Pessoa < BaseModel
     end
   end
 
-  def self.from_hash(hash)
-    pessoa = Pessoa.new id: hash[:id],
-      apelido: hash[:apelido],
-      nome: hash[:nome],
+  def self.from_params(params)
+    pessoa = Pessoa.new id: UUID.random,
+      apelido: params.get("apelido"),
+      nome: params.get("nome"),
       nascimento: nil,
-      stack: hash[:stack]
+      stack: params.get("stack")
 
-    pessoa.nascimento_as_string = hash[:nascimento]
+    pessoa.nascimento_as_string = params.get("nascimento")
     pessoa
   end
 

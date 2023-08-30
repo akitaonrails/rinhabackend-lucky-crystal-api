@@ -1,21 +1,21 @@
 require "deque"
 
 class BatchInsertEvent < Pulsar::Event
-  @@buffer = Deque(PessoaTuple).new(0)
+  @@buffer = Deque(SavePessoa).new(0)
 
-  def initialize(@pessoa : PessoaTuple?)
+  def initialize(@operation : SavePessoa?)
   end
 
-  def pessoa
-    @pessoa
+  def operation
+    @operation
   end
 
-  def push(pessoa : PessoaTuple?)
-    return unless pessoa
-    @@buffer.push pessoa
+  def push(operation : SavePessoa?)
+    return unless operation
+    @@buffer.push operation
   end
 
-  def shift : PessoaTuple
+  def shift : SavePessoa
     @@buffer.shift
   end
 
@@ -23,11 +23,7 @@ class BatchInsertEvent < Pulsar::Event
     tmp_buffer = [] of SavePessoa
     counter = 10
     while counter > 0 && !@@buffer.empty?
-      operation = SavePessoa.from_tuple(shift)
-
-      if operation.valid?
-        tmp_buffer.push(operation)
-      end
+      tmp_buffer.push(shift)
       counter -= 1
     end
     tmp_buffer
@@ -43,7 +39,7 @@ class BatchInsertEvent < Pulsar::Event
 end
 
 BatchInsertEvent.subscribe do |event|
-  event.push(event.pessoa)
+  event.push(event.operation)
   if event.count >= Application.settings.batch_insert_size
     bulk = event.bulk_pop
     begin

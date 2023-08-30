@@ -2,7 +2,11 @@ require "../spec_helper"
 
 describe SavePessoa do
   describe "should cast values" do
-    pessoa = Pessoa.from_hash({id: UUID.random, apelido: "foo", nome: "bar", nascimento: nil, stack: nil})
+    pessoa = Pessoa.new(id: UUID.random,
+      apelido: "foo",
+      nome: "bar",
+      nascimento: nil,
+      stack: nil)
     pessoa.apelido.should eq "foo"
 
     pessoa.nascimento_as_string = "2001-02-01"

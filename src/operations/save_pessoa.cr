@@ -15,11 +15,11 @@ class SavePessoa < Pessoa::SaveOperation
     validate_size_of nome, max: 100
   end
 
-  def self.from_tuple(tuple : PessoaTuple)
-    new(id: tuple[:id],
-      apelido: tuple[:apelido],
-      nome: tuple[:nome],
-      nascimento: tuple[:nascimento],
-      stack: tuple[:stack])
+  def self.build(pessoa : Pessoa)
+    new(id: pessoa.id,
+      apelido: pessoa.apelido,
+      nome: pessoa.nome,
+      nascimento: pessoa.nascimento,
+      stack: pessoa.stack)
   end
 end
