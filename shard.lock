@@ -6,7 +6,7 @@ shards:
 
   avram:
     git: https://github.com/akitaonrails/avram.git
-    version: 1.0.0+git.commit.2d959c76edf2d7fb764de8994bb6bec1e5f998db
+    version: 1.0.0+git.commit.187a5f393dcf299ba82867ebcb701207ed385778
 
   backtracer:
     git: https://github.com/sija/backtracer.cr.git

@@ -59,6 +59,22 @@ describe Api::Pessoas::Create do
     response.headers["Location"].should match %r{/pessoas/[0-9a-f-]{36}}
   end
 
+  it "should create new pessoa even with invalid stack" do
+    response = ApiClient.exec(Api::Pessoas::Create,
+      apelido: "ana", nome: "Ana Barbosa",
+      nascimento: "2000-01-01", stack: nil)
+    response.status.should eq HTTP::Status::CREATED
+    pessoa = PessoaQuery.new.last
+    pessoa.stack_as_array.should eq [] of String
+
+    response = ApiClient.exec(Api::Pessoas::Create,
+      apelido: "ana", nome: "Ana Barbosa",
+      nascimento: "2000-01-01", stack: 1)
+    response.status.should eq HTTP::Status::CREATED
+    pessoa = PessoaQuery.new.last
+    pessoa.stack_as_array.should eq [] of String
+  end
+
   it "should create 2 out of 3 pessoas even if one is a conflict" do
     Application.settings.batch_insert_size = 3
 

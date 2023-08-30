@@ -52,7 +52,7 @@ class Db::Seed::SampleData < LuckyTask::Task
       rescue Time::Format::Error
         puts "invalid time #{payload["nascimento"]?}"
       rescue ArgumentError
-        puts "invalid time #{payload["nascimento"]?}"
+        puts "invalid time or stack #{payload["nascimento"]?}, #{payload["stack"]?}"
       end
 
       if buffer.size > 10

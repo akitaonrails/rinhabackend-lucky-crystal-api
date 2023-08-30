@@ -9,7 +9,7 @@ class Api::Pessoas::Create < ApiAction
         stack:      params.get("stack"),
       })
     rescue e
-      raise UnprocessableError.new("invalid pessoa #{params.inspect} - #{e.message}")
+      raise UnprocessableError.new("invalid pessoa #{params.get("nascimento")}, #{params.get("stack")} - #{e.message}")
     end
 
     json = CACHE.fetch(pessoa.id.to_s, as: String, expires_in: 30.seconds) do

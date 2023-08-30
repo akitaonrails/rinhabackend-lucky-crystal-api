@@ -16,6 +16,10 @@ class SavePessoa < Pessoa::SaveOperation
   end
 
   def self.from_tuple(tuple : PessoaTuple)
-    new(id: tuple[:id], apelido: tuple[:apelido], nome: tuple[:nome], nascimento: tuple[:nascimento], stack: tuple[:stack])
+    new(id: tuple[:id],
+      apelido: tuple[:apelido],
+      nome: tuple[:nome],
+      nascimento: tuple[:nascimento],
+      stack: tuple[:stack])
   end
 end
