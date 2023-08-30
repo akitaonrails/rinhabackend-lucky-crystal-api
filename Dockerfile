@@ -31,7 +31,7 @@ COPY ./tasks.cr /app/tasks.cr
 COPY ./tasks /app/tasks
 COPY ./spec /app/spec
 
-RUN shards check || shards install
+RUN shards check || shards install --without-development
 RUN shards build --production
 
 ENV DATABASE_URL=postgres://postgres:password@postgres:5432/postgres

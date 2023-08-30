@@ -5,4 +5,8 @@ class PessoaQuery < Pessoa::BaseQuery
       .or(&.nome.ilike(query))
       .or(&.stack.ilike(query))
   end
+
+  def self.count
+    new.select_count
+  end
 end

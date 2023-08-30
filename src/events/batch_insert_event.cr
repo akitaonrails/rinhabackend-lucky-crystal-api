@@ -1,14 +1,17 @@
-class BatchInsertEvent < Pulsar::Event
-  @@buffer = [] of PessoaTuple
+require "deque"
 
-  def initialize(@pessoa : PessoaTuple)
+class BatchInsertEvent < Pulsar::Event
+  @@buffer = Deque(PessoaTuple).new(0)
+
+  def initialize(@pessoa : PessoaTuple?)
   end
 
   def pessoa
     @pessoa
   end
 
-  def push(pessoa : PessoaTuple)
+  def push(pessoa : PessoaTuple?)
+    return unless pessoa
     @@buffer.push pessoa
   end
 

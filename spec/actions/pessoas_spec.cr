@@ -22,7 +22,7 @@ describe Api::Pessoas::Show do
   it "should return 404 if nothing found" do
     pessoa_id = "123e4567-e89b-12d3-a456-426655440000"
     url = "http://localhost:3000/pessoas/#{pessoa_id}"
-    WebMock.stub(:get, url).to_return do |request|
+    WebMock.stub(:get, url).to_return do |_|
       HTTP::Client::Response.new(404)
     end
 
@@ -57,6 +57,34 @@ describe Api::Pessoas::Create do
       nascimento: "2000-01-01", stack: ["php", "python"])
     response.status.should eq HTTP::Status::CREATED
     response.headers["Location"].should match %r{/pessoas/[0-9a-f-]{36}}
+  end
+
+  it "should create 2 out of 3 pessoas even if one is a conflict" do
+    Application.settings.batch_insert_size = 3
+
+    response = ApiClient.exec(Api::Pessoas::Create,
+      apelido: "ana", nome: "Ana Barbosa",
+      nascimento: "2000-01-01", stack: ["php", "python"])
+    response.status.should eq HTTP::Status::CREATED
+    # queued
+    PessoaQuery.count.should eq 0
+
+    response = ApiClient.exec(Api::Pessoas::Create,
+      apelido: "ana", nome: "Ana Barbosa",
+      nascimento: "2000-01-01", stack: ["php", "python"])
+    response.status.should eq HTTP::Status::CREATED
+    # queued
+    PessoaQuery.count.should eq 0
+
+    response = ApiClient.exec(Api::Pessoas::Create,
+      apelido: "jose", nome: "Jose Roberto",
+      nascimento: "2000-02-01", stack: ["java", "ruby"])
+    response.status.should eq HTTP::Status::CREATED
+    # pulsar job should run and empty the queue with a bulk insert
+    PessoaQuery.count.should eq 2
+
+    # just to make sure this won't affect other tests
+    Application.settings.batch_insert_size = 1
   end
 end
 
