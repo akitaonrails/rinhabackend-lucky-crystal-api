@@ -1,5 +1,9 @@
 version: 2.0
 shards:
+  ameba:
+    git: https://github.com/crystal-ameba/ameba.git
+    version: 1.5.0
+
   avram:
     git: https://github.com/akitaonrails/avram.git
     version: 1.0.0+git.commit.d16777a91ff7f396b091f28d2a21093b941f2cbe
@@ -79,6 +83,10 @@ shards:
   teeplate:
     git: https://github.com/luckyframework/teeplate.git
     version: 0.8.5
+
+  webmock:
+    git: https://github.com/manastech/webmock.cr.git
+    version: 0.14.0+git.commit.42b347cdd64e13193e46167a03593944ae2b3d20
 
   wordsmith:
     git: https://github.com/luckyframework/wordsmith.git

@@ -33,3 +33,11 @@ dependencies:
     github: luckyframework/pulsar
   lucky_cache:
     github: luckyframework/lucky_cache
+
+development_dependencies:
+  ameba:
+    github: crystal-ameba/ameba
+    version: ~> 1.5.0
+  webmock:
+    github: manastech/webmock.cr
+    branch: master

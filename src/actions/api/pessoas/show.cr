@@ -22,7 +22,7 @@ class Api::Pessoas::Show < ApiAction
   end
 
   def fetch_from_other_server(pessoa_id)
-    return "" unless LuckyEnv.production?
+    return "" unless Application.settings.other_server
 
     uri = Application.settings.other_server + "/pessoas/#{pessoa_id}"
     response = HTTP::Client.get(uri, headers: JSON_HEADER)

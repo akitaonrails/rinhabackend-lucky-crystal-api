@@ -21,6 +21,7 @@ class BatchInsertEvent < Pulsar::Event
     counter = 10
     while counter > 0 && !@@buffer.empty?
       operation = SavePessoa.from_tuple(pop)
+
       if operation.valid?
         tmp_buffer.push(operation)
       end
@@ -41,8 +42,11 @@ end
 BatchInsertEvent.subscribe do |event|
   event.push(event.pessoa)
   if event.count >= Application.settings.batch_insert_size
-    AppDatabase.transaction do
-      SavePessoa.import(event.bulk_pop)
+    bulk = event.bulk_pop
+    begin
+      SavePessoa.import(bulk)
+    rescue e
+      Lucky::Log.error(exception: e) { "error bulk saving" }
     end
   end
 end
