@@ -2,29 +2,25 @@ require "deque"
 
 class BatchInsertEvent < Pulsar::Event
   @@buffer = Deque(SavePessoa).new(0)
+  getter :operation
 
   def initialize(@operation : SavePessoa?)
   end
 
-  def operation
-    @operation
-  end
-
   def push(operation : SavePessoa?)
     return unless operation
-    @@buffer.push operation
+    @@buffer.push(operation.as(SavePessoa))
   end
 
   def shift : SavePessoa
     @@buffer.shift
   end
 
-  def bulk_pop(batch_size = 10)
+  def get_batch
     tmp_buffer = [] of SavePessoa
-    counter = 10
-    while counter > 0 && !@@buffer.empty?
+    Application.settings.batch_insert_size.times do
+      break if @@buffer.empty?
       tmp_buffer.push(shift)
-      counter -= 1
     end
     tmp_buffer
   end
@@ -36,16 +32,22 @@ class BatchInsertEvent < Pulsar::Event
   def count : Int32
     @@buffer.size
   end
+
+  def self.empty?
+    @@buffer.empty?
+  end
+
+  def self.flush!
+    while !self.empty?
+      self.publish(nil)
+    end
+  end
 end
 
 BatchInsertEvent.subscribe do |event|
   event.push(event.operation)
-  if event.count >= Application.settings.batch_insert_size
-    bulk = event.bulk_pop
-    begin
-      SavePessoa.import(bulk)
-    rescue e
-      Lucky::Log.error(exception: e) { "error bulk saving" }
-    end
+  if event.operation.nil? || (event.count >= Application.settings.batch_insert_size)
+    batch = event.get_batch
+    SavePessoa.import(batch)
   end
 end

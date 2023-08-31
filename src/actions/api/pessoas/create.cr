@@ -2,11 +2,15 @@ class Api::Pessoas::Create < ApiAction
   post "/pessoas" do
     pessoa = build_pessoa(params)
     operation = build_operation(pessoa)
-    json = warmup_cache(pessoa)
 
-    BatchInsertEvent.publish(operation)
-    response.headers["Location"] = Api::Pessoas::Show.url(pessoa_id: pessoa.id)
-    raw_json(json, HTTP::Status::CREATED)
+    if operation.valid?
+      json = warmup_cache(pessoa)
+      BatchInsertEvent.publish(operation)
+      response.headers["Location"] = Api::Pessoas::Show.url(pessoa_id: pessoa.id)
+      raw_json(json, HTTP::Status::CREATED)
+    else
+      raise BadRequestError.new("invalid pessoa #{operation.errors}")
+    end
   end
 
   def build_pessoa(params)
@@ -16,11 +20,9 @@ class Api::Pessoas::Create < ApiAction
   end
 
   def build_operation(pessoa)
-    operation = SavePessoa.build(pessoa)
-    unless operation.valid?
-      raise BadRequestError.new("invalid pessoa #{operation.errors}")
+    SavePessoa.build(pessoa).tap do |operation|
+      operation.before_save
     end
-    operation
   end
 
   def warmup_cache(pessoa)
