@@ -3,12 +3,12 @@ class AppServer < Lucky::BaseAppServer
   # https://luckyframework.org/guides/http-and-routing/http-handlers
   def middleware : Array(HTTP::Handler)
     [
-      Lucky::RequestIdHandler.new,
+      # Lucky::RequestIdHandler.new,
       # Lucky::ForceSSLHandler.new,
-      Lucky::HttpMethodOverrideHandler.new,
+      # Lucky::HttpMethodOverrideHandler.new,
       Lucky::LogHandler.new,
-      Lucky::ErrorHandler.new(action: Errors::Show),
-      Lucky::RemoteIpHandler.new,
+      # Lucky::ErrorHandler.new(action: Errors::Show),
+      # Lucky::RemoteIpHandler.new,
       Lucky::RouteHandler.new,
 
       # Disabled in API mode:
