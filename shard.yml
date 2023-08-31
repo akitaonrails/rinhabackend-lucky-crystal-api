@@ -31,8 +31,12 @@ dependencies:
     version: ~> 0.1.1
   pulsar:
     github: luckyframework/pulsar
-  lucky_cache:
-    github: luckyframework/lucky_cache
+  kiwi:
+    github: akitaonrails/kiwi
+    branch: master
+  redis:
+    github: stefanwille/crystal-redis
+    version: ~> 2.9.1
 
 development_dependencies:
   ameba:

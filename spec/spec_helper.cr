@@ -19,4 +19,4 @@ Avram::SchemaEnforcer.ensure_correct_column_mappings!
 Habitat.raise_if_missing_settings!
 
 # ensure cache is clean before specs
-CACHE.flush
+CACHE.clear

@@ -21,11 +21,6 @@ end
 describe Api::Pessoas::Show do
   it "should return 404 if nothing found" do
     pessoa_id = "123e4567-e89b-12d3-a456-426655440000"
-    url = "http://localhost:3000/pessoas/#{pessoa_id}"
-    WebMock.stub(:get, url).to_return do |_|
-      HTTP::Client::Response.new(404)
-    end
-
     response = ApiClient.exec(Api::Pessoas::Show.with(pessoa_id))
     response.status.should eq HTTP::Status::NOT_FOUND
   end
@@ -37,16 +32,6 @@ describe Api::Pessoas::Show do
 
     result = Hash(String, JSON::Any).from_json(response.body)
     result["nome"].should eq "José Roberto"
-  end
-
-  it "should try to call the second app instance to use as a pseudo cache" do
-    json = PessoaSerializer.new(PessoaFactory.create).render.to_json
-    pessoa_id = "dbde7d04-3fc8-4217-90e3-39b19eafb38d"
-    url = "http://localhost:3000/pessoas/#{pessoa_id}"
-    WebMock.stub(:get, url).to_return(json)
-
-    response = ApiClient.exec(Api::Pessoas::Show.with(pessoa_id))
-    response.status.should eq HTTP::Status::OK
   end
 end
 

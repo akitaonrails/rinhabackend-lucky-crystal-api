@@ -44,6 +44,10 @@ shards:
     git: https://github.com/luckyframework/habitat.git
     version: 0.4.7
 
+  kiwi:
+    git: https://github.com/akitaonrails/kiwi.git
+    version: 0.1.0+git.commit.ea16245e07fcf49fa793aa74d916c922baa3bb47
+
   lucky:
     git: https://github.com/luckyframework/lucky.git
     version: 1.0.0
@@ -68,9 +72,17 @@ shards:
     git: https://github.com/will/crystal-pg.git
     version: 0.27.0
 
+  pool:
+    git: https://github.com/ysbaddaden/pool.git
+    version: 0.2.4
+
   pulsar:
     git: https://github.com/luckyframework/pulsar.git
     version: 0.2.3
+
+  redis:
+    git: https://github.com/stefanwille/crystal-redis.git
+    version: 2.9.1
 
   shell-table:
     git: https://github.com/luckyframework/shell-table.cr.git

@@ -11,7 +11,7 @@ class Api::Pessoas::Create < ApiAction
         json = warmup_cache(pessoa)
         BatchInsertEvent.publish(operation)
         response.headers["Location"] = Api::Pessoas::Show.url(pessoa_id: pessoa.id)
-        raw_json(json, HTTP::Status::CREATED)
+        raw_json(json || "{}", HTTP::Status::CREATED)
       else
         head 400
       end
@@ -33,7 +33,7 @@ class Api::Pessoas::Create < ApiAction
   end
 
   def warmup_cache(pessoa)
-    CACHE.fetch(pessoa.id.to_s, as: String, expires_in: 30.seconds) do
+    CACHE.fetch(pessoa.id.to_s) do
       PessoaSerializer.new(pessoa).render.to_json
     end
   end
