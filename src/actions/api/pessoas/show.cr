@@ -4,20 +4,24 @@ class Api::Pessoas::Show < ApiAction
   get "/pessoas/:pessoa_id" do
     cast_uuid = UUID.new(pessoa_id)
 
-    json_pessoa = CACHE.fetch(cast_uuid.to_s, as: String) do
-      pessoa = PessoaQuery.new.id(cast_uuid).first?
+    begin
+      json_pessoa = CACHE.fetch(cast_uuid.to_s, as: String) do
+        pessoa = PessoaQuery.new.id(cast_uuid).first?
 
-      if pessoa.nil?
-        fetch_from_other_server(pessoa_id)
-      else
-        PessoaSerializer.new(pessoa).render.to_json
+        if pessoa.nil?
+          fetch_from_other_server(pessoa_id)
+        else
+          PessoaSerializer.new(pessoa).render.to_json
+        end
       end
-    end
 
-    if json_pessoa.blank?
-      raise NotFoundError.new("Pessoa not found")
-    else
-      raw_json(json_pessoa)
+      if json_pessoa.blank?
+        head 404
+      else
+        raw_json(json_pessoa)
+      end
+    rescue
+      head 400
     end
   end
 

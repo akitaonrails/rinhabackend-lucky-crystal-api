@@ -1,25 +1,32 @@
 class Api::Pessoas::Create < ApiAction
   post "/pessoas" do
     pessoa = build_pessoa(params)
-    operation = build_operation(pessoa)
+    unless pessoa
+      return head 422
+    end
 
-    if operation.valid?
-      json = warmup_cache(pessoa)
-      BatchInsertEvent.publish(operation)
-      response.headers["Location"] = Api::Pessoas::Show.url(pessoa_id: pessoa.id)
-      raw_json(json, HTTP::Status::CREATED)
-    else
-      raise BadRequestError.new("invalid pessoa #{operation.errors}")
+    begin
+      operation = build_operation(pessoa)
+      if operation.valid?
+        json = warmup_cache(pessoa)
+        BatchInsertEvent.publish(operation)
+        response.headers["Location"] = Api::Pessoas::Show.url(pessoa_id: pessoa.id)
+        raw_json(json, HTTP::Status::CREATED)
+      else
+        head 400
+      end
+    rescue
+      head 422
     end
   end
 
-  def build_pessoa(params)
+  def build_pessoa(params) : Pessoa?
     Pessoa.from_params(params)
   rescue e
-    raise UnprocessableError.new("invalid pessoa #{params.get("nascimento")}, #{params.get("stack")} - #{e.message}")
+    nil
   end
 
-  def build_operation(pessoa)
+  def build_operation(pessoa : Pessoa)
     SavePessoa.build(pessoa).tap do |operation|
       operation.before_save
     end

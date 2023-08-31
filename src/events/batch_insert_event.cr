@@ -17,12 +17,13 @@ class BatchInsertEvent < Pulsar::Event
   end
 
   def get_batch
-    tmp_buffer = [] of SavePessoa
-    Application.settings.batch_insert_size.times do
-      break if @@buffer.empty?
-      tmp_buffer.push(shift)
+    batch_size = Application.settings.batch_insert_size
+    Array(SavePessoa).new(batch_size).tap do |tmp_buffer|
+      batch_size.times do
+        break if @@buffer.empty?
+        tmp_buffer.push(shift)
+      end
     end
-    tmp_buffer
   end
 
   def get_buffer
