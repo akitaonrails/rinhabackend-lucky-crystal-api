@@ -2,6 +2,7 @@ class Api::Pessoas::Show < ApiAction
   JSON_HEADER = HTTP::Headers{"Content-Type" => "application/json"}
 
   get "/pessoas/:pessoa_id" do
+    # raw_json "{}", HTTP::Status::OK
     uuid = UUID.new(pessoa_id)
 
     begin
@@ -16,7 +17,7 @@ class Api::Pessoas::Show < ApiAction
       if json_pessoa.blank?
         head 404
       else
-        raw_json(json_pessoa || "{}")
+        raw_json(json_pessoa || "{}", HTTP::Status::OK)
       end
     rescue e
       head 400

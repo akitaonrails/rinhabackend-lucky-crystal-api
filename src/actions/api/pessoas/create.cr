@@ -1,5 +1,9 @@
 class Api::Pessoas::Create < ApiAction
   post "/pessoas" do
+    # spawn { Api::Pessoas::Count.incr }
+    # response.headers["Location"] = "http://localhost:9999/pessoas/1"
+    # raw_json("{}", HTTP::Status::CREATED)
+
     pessoa = build_pessoa(params)
     return head 422 unless pessoa
 

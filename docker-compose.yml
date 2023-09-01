@@ -5,9 +5,11 @@ services:
     build: .
     environment:
       DATABASE_URL: postgres://postgres:password@postgres:5432/postgres
-      MAX_POOL_SIZE: 40
+      MAX_POOL_SIZE: 120
       BATCH_INSERT_SIZE: 50
       REDIS_HOST: redis
+      REDIS_POOL_SIZE: 9995
+      REDIS_POOL_TIMEOUT: 1.0
       DEV_HOST: "0.0.0.0"
       PORT: 3000
       LUCKY_ENV: production
@@ -25,16 +27,11 @@ services:
       - postgres
     expose:
       - "3000"
-    ulimits:
-      nproc: 1000000
-      nofile:
-        soft: 1000000
-        hard: 1000000
     deploy:
       resources:
         limits:
-          cpus: '0.35'
-          memory: '0.3GB'
+          cpus: '0.15'
+          memory: '0.4GB'
 
   api2:
     <<: *api
@@ -58,18 +55,16 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.4'
+          cpus: '0.15'
           memory: '0.5GB'
 
   postgres: # Banco de dados
     image: docker.io/postgres
     environment:
       POSTGRES_PASSWORD: password
-      POSTGRES_MAX_CONNECTIONS: 100
-      POSTGRES_SHARED_BUFFERS: 256MB
-      POSTGRES_MEM_LIMIT: 1.8GB
     volumes:
       - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - ./postgresql.conf:/docker-entrypoint-initdb.d/postgresql.conf
     healthcheck:
       test: ["CMD-SHELL", "pg_isready"]
       interval: 5s
@@ -79,17 +74,19 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.3'
-          memory: '1.6GB'
+          cpus: '0.9'
+          memory: '1.4GB'
 
   redis:
     image: docker.io/redis:latest
-    environment:
-      REDIS_ARGS: "--maxmemory 256mb --save \"\" --appendonly no"
+    hostname: redis
+    ports:
+      - "6379:6379"
+    command: redis-server --save "" --appendonly no --maxclients 20000
     deploy:
       resources:
         limits:
-          cpus: '0.1'
+          cpus: '0.15'
           memory: '0.3GB'
 
 volumes:
