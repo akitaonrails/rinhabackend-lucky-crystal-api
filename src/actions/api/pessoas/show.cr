@@ -3,11 +3,9 @@ class Api::Pessoas::Show < ApiAction
 
   get "/pessoas/:pessoa_id" do
     # raw_json "{}", HTTP::Status::OK
-    uuid = UUID.new(pessoa_id)
-
     begin
-      json_pessoa = CACHE.fetch(uuid.to_s) do
-        if pessoa = PessoaQuery.new.id(uuid).first?
+      json_pessoa = CACHE.fetch(pessoa_id) do
+        if pessoa = PessoaQuery.find_first?(pessoa_id)
           PessoaSerializer.new(pessoa).render.to_json
         else
           nil

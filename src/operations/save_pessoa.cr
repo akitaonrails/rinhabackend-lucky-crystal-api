@@ -22,4 +22,8 @@ class SavePessoa < Pessoa::SaveOperation
       nascimento: pessoa.nascimento,
       stack: pessoa.stack)
   end
+
+  def values : Hash(Symbol, String?)
+    attributes_to_hash(column_attributes)
+  end
 end

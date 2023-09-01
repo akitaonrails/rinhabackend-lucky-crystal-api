@@ -5,8 +5,8 @@ shards:
     version: 1.5.0
 
   avram:
-    git: https://github.com/akitaonrails/avram.git
-    version: 1.0.0+git.commit.cee90bcac1549f6bf08c9f47761c7da38745f94f
+    git: https://github.com/luckyframework/avram.git
+    version: 1.0.0
 
   backtracer:
     git: https://github.com/sija/backtracer.cr.git
@@ -30,7 +30,7 @@ shards:
 
   db:
     git: https://github.com/crystal-lang/crystal-db.git
-    version: 0.12.0
+    version: 0.11.0
 
   dexter:
     git: https://github.com/luckyframework/dexter.git
@@ -70,7 +70,7 @@ shards:
 
   pg:
     git: https://github.com/will/crystal-pg.git
-    version: 0.27.0
+    version: 0.26.0
 
   pool:
     git: https://github.com/ysbaddaden/pool.git
