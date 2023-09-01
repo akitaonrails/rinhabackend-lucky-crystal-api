@@ -1,12 +1,10 @@
 class Api::Pessoas::Index < ApiAction
   get "/pessoas" do
-    term = params.get?("t")
-
-    if term.nil?
-      head 400
-    else
+    if term = params.get?("t")
       query = PessoaQuery.search(term).map { |item| item }
       json(PessoaSerializer.for_collection(query))
+    else
+      head 400
     end
   end
 end

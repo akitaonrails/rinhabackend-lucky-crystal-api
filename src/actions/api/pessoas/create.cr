@@ -1,17 +1,16 @@
 class Api::Pessoas::Create < ApiAction
   post "/pessoas" do
     pessoa = build_pessoa(params)
-    unless pessoa
-      return head 422
-    end
+    return head 422 unless pessoa
 
     begin
-      operation = build_operation(pessoa)
-      if operation.valid?
-        json = warmup_cache(pessoa)
-        BatchInsertEvent.publish(operation)
+      if (operation = build_operation(pessoa)).valid?
+        json = PessoaSerializer.new(pessoa).render.to_json
+        spawn { warmup_cache(pessoa, json) }
+        spawn { BatchInsertEvent.publish(operation) }
+
         response.headers["Location"] = Api::Pessoas::Show.url(pessoa_id: pessoa.id)
-        raw_json(json || "{}", HTTP::Status::CREATED)
+        raw_json(json, HTTP::Status::CREATED)
       else
         head 400
       end
@@ -32,9 +31,9 @@ class Api::Pessoas::Create < ApiAction
     end
   end
 
-  def warmup_cache(pessoa)
+  def warmup_cache(pessoa, json)
     CACHE.fetch(pessoa.id.to_s) do
-      PessoaSerializer.new(pessoa).render.to_json
+      json
     end
   end
 end

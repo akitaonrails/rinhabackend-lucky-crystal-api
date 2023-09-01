@@ -19,8 +19,6 @@ class Api::Pessoas::Show < ApiAction
         raw_json(json_pessoa || "{}")
       end
     rescue e
-      puts e.message
-      puts e.backtrace.join("\n")
       head 400
     end
   end
