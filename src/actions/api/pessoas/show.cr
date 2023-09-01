@@ -1,6 +1,4 @@
 class Api::Pessoas::Show < ApiAction
-  JSON_HEADER = HTTP::Headers{"Content-Type" => "application/json"}
-
   get "/pessoas/:pessoa_id" do
     # raw_json "{}", HTTP::Status::OK
     begin

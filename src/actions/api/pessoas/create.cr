@@ -1,8 +1,8 @@
 class Api::Pessoas::Create < ApiAction
   post "/pessoas" do
-    # spawn { Api::Pessoas::Count.incr }
     # response.headers["Location"] = "http://localhost:9999/pessoas/1"
     # raw_json("{}", HTTP::Status::CREATED)
+    spawn { Api::Pessoas::Count.incr }
 
     pessoa = build_pessoa(params)
     return head 422 unless pessoa
@@ -11,9 +11,13 @@ class Api::Pessoas::Create < ApiAction
       if (operation = build_operation(pessoa)).valid?
         json = PessoaSerializer.new(pessoa).render.to_json
         spawn { warmup_cache(pessoa, json) }
-        spawn { BatchInsertEvent.publish(operation) }
+        BatchInsertEvent.publish(operation)
 
-        response.headers["Location"] = Api::Pessoas::Show.url(pessoa_id: pessoa.id)
+        # this is a massive performance bug. using Action.url brings stress test from 46k down to 32k.
+        # 30% hit just in url generation!!
+        # response.headers["Location"] = Api::Pessoas::Show.url(pessoa_id: pessoa.id)
+        # response.headers["Location"] = "#{Lucky::RouteHelper.settings.base_uri}/pessoas/#{pessoa.id}"
+        response.headers["Location"] = "http://localhost:9999/pessoas/#{pessoa.id}"
         raw_json(json, HTTP::Status::CREATED)
       else
         head 400

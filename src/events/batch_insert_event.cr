@@ -75,13 +75,9 @@ class BulkInsert
       io << ")"
     end
   end
-end
 
-BatchInsertEvent.subscribe do |event|
-  event.push(event.operation)
-
-  if event.operation.nil? || (event.count >= Application.settings.batch_insert_size)
-    insert_values = event.get_batch.select(&.valid?).map(&.values)
+  def self.execute(operations)
+    insert_values = operations.select(&.valid?).map(&.values)
     insert_sql = BulkInsert.new(Pessoa.table_name, insert_values, Pessoa.column_names)
 
     AppDatabase.transaction do
@@ -93,5 +89,14 @@ BatchInsertEvent.subscribe do |event|
 
       true
     end
+  end
+end
+
+BatchInsertEvent.subscribe do |event|
+  event.push(event.operation)
+
+  if event.operation.nil? || (event.count >= Application.settings.batch_insert_size)
+    batch = event.get_batch # this can't be in a fiber, or we'll have out of order items
+    spawn { BulkInsert.execute(batch) }
   end
 end

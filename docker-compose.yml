@@ -80,8 +80,6 @@ services:
   redis:
     image: docker.io/redis:latest
     hostname: redis
-    ports:
-      - "6379:6379"
     command: redis-server --save "" --appendonly no --maxclients 20000
     deploy:
       resources:
