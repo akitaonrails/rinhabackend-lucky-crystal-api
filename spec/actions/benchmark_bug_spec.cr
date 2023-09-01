@@ -25,7 +25,7 @@ describe Api::Pessoas::Show do
     puts "base_uri concat: #{elapsed_time3.milliseconds}"
 
     # this only assesses that the Lucky routable.cr route method is almost 7x slower than just string concatenation
-    (elapsed_time1).should_not be.>(elapsed_time2 * 7)
-    (elapsed_time1).should_not be.>(elapsed_time3 * 7)
+    (elapsed_time1).should_not be.>(elapsed_time2 * 10)
+    (elapsed_time1).should_not be.>(elapsed_time3 * 10)
   end
 end

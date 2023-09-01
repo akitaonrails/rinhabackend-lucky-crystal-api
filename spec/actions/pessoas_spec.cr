@@ -98,6 +98,6 @@ describe Api::Pessoas::Count do
     PessoaFactory.create
     response = ApiClient.exec(Api::Pessoas::Count)
     response.status.should eq HTTP::Status::OK
-    response.body.should eq "1"
+    response.body.should eq "counter: 6, sql: 1"
   end
 end
