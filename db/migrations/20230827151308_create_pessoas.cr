@@ -13,7 +13,16 @@ class CreatePessoas::V20230827151308 < Avram::Migrator::Migration::V1
     enable_extension "pg_trgm"
 
     execute <<-SQL
-    CREATE INDEX pessoas_search_idx ON pessoas USING gin (apelido gin_trgm_ops, nome gin_trgm_ops, stack gin_trgm_ops);
+    ALTER TABLE PESSOAS
+    ADD COLUMN searchable TEXT GENERATED ALWAYS AS (
+      LOWER(NOME || APELIDO || STACK)
+    ) STORED
+    SQL
+
+    # run lucky db.schema.dump and modify the .sql file to have CREATE INDEX CONCURRENTLY
+    execute <<-SQL
+    CREATE INDEX IF NOT EXISTS IDX_PESSOAS_SEARCHABLE ON PESSOAS
+    USING GIST (searchable GIST_TRGM_OPS(SIGLEN=64));
     SQL
   end
 

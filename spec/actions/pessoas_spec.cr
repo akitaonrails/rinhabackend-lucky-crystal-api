@@ -49,6 +49,7 @@ describe Api::Pessoas::Create do
       apelido: "ana", nome: "Ana Barbosa",
       nascimento: "2000-01-01", stack: nil)
     response.status.should eq HTTP::Status::CREATED
+    sleep 0.2
     pessoa = PessoaQuery.new.last
     pessoa.stack_as_array.should eq [] of String
 
@@ -56,6 +57,7 @@ describe Api::Pessoas::Create do
       apelido: "ana", nome: "Ana Barbosa",
       nascimento: "2000-01-01", stack: 1)
     response.status.should eq HTTP::Status::CREATED
+    sleep 0.2
     pessoa = PessoaQuery.new.last
     pessoa.stack_as_array.should eq [] of String
   end
@@ -66,6 +68,7 @@ describe Api::Pessoas::Create do
     response = ApiClient.exec(Api::Pessoas::Create,
       apelido: "ana", nome: "Ana Barbosa",
       nascimento: "2000-01-01", stack: ["php", "python"])
+    sleep 0.2 # give fiber chance to run
     response.status.should eq HTTP::Status::CREATED
     # queued
     PessoaQuery.count.should eq 0
@@ -82,6 +85,7 @@ describe Api::Pessoas::Create do
       nascimento: "2000-02-01", stack: ["java", "ruby"])
     response.status.should eq HTTP::Status::CREATED
     # pulsar job should run and empty the queue with a bulk insert
+    sleep 0.2
     PessoaQuery.count.should eq 2
 
     # just to make sure this won't affect other tests

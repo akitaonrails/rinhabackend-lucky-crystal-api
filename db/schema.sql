@@ -24,7 +24,7 @@ CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;
 
 
 --
--- Name: EXTENSION pg_trgm; Type: COMMENT; Schema: -; Owner: 
+-- Name: EXTENSION pg_trgm; Type: COMMENT; Schema: -; Owner:
 --
 
 COMMENT ON EXTENSION pg_trgm IS 'text similarity measurement and index searching based on trigrams';
@@ -76,7 +76,8 @@ CREATE TABLE public.pessoas (
     apelido text NOT NULL,
     nome text NOT NULL,
     nascimento timestamp with time zone,
-    stack text
+    stack text,
+    searchable text GENERATED ALWAYS AS (lower(((nome || apelido) || stack))) STORED
 );
 
 
@@ -106,6 +107,13 @@ ALTER TABLE ONLY public.pessoas
 
 
 --
+-- Name: idx_pessoas_searchable; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX CONCURRENTLY idx_pessoas_searchable ON public.pessoas USING gist (searchable public.gist_trgm_ops (siglen='64'));
+
+
+--
 -- Name: migrations_version_index; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -117,13 +125,6 @@ CREATE UNIQUE INDEX migrations_version_index ON public.migrations USING btree (v
 --
 
 CREATE UNIQUE INDEX pessoas_apelido_index ON public.pessoas USING btree (apelido);
-
-
---
--- Name: pessoas_search_idx; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE INDEX pessoas_search_idx ON public.pessoas USING gin (apelido public.gin_trgm_ops, nome public.gin_trgm_ops, stack public.gin_trgm_ops);
 
 
 --

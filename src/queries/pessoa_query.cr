@@ -1,9 +1,9 @@
 class PessoaQuery < Pessoa::BaseQuery
   def self.search(term)
-    query = "%#{term}%"
-    new.apelido.ilike(query)
-      .or(&.nome.ilike(query))
-      .or(&.stack.ilike(query))
+    AppDatabase.query_all("SELECT ID, APELIDO, NOME, NASCIMENTO, STACK
+      FROM PESSOAS
+      WHERE SEARCHABLE ILIKE '%#{term}%'
+      LIMIT 50", as: Pessoa)
   end
 
   def self.count
