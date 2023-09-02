@@ -8,6 +8,10 @@ The idea was to create a very simple set of API endpoints and run against a Gatl
 
 You can use the "docker-compose.yml" provided to spin up the environment with the resource restrictions from the challenge and run the Gatling script against it.
 
+When you want to run the stress test and monitor each container, you can use tmuxp to open htop to monitor the app, postgres, redis and nginx with:
+
+    tmuxp load tmux-monitor.yaml
+
 ### Setting up the project
 
 1. [Install required dependencies](https://luckyframework.org/guides/getting-started/installing#install-required-dependencies)
