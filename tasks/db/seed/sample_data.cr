@@ -46,21 +46,28 @@ class Db::Seed::SampleData < LuckyTask::Task
           [] of String
         end
 
+        if stack.any? { |item| item.blank? || item.size > 32 }
+          raise "invalid stack"
+        end
+
         # validate input
         operation = SavePessoa.new(id: UUID.random,
           apelido: payload["apelido"].as(String),
           nome: payload["nome"].as(String),
           nascimento: Time.parse(nascimento, "%Y-%m-%d", Time::Location.local),
-          stack: payload["stack"]?.try &.to_json)
+          stack: stack.to_json)
 
-        BatchInsertEvent.publish(operation)
+        # BatchInsertEvent.publish(operation)
+        if operation.valid?
+          operation.save
+        end
       rescue e
         # puts "ERROR: #{e.message} #{payload["nascimento"]?}, #{payload["stack"]?}"
         print "F"
       end
     end
     # just to flush left over ops in the queue
-    BatchInsertEvent.flush!
+    # BatchInsertEvent.flush!
     puts PessoaQuery.count
     puts "Done adding sample data"
   end
