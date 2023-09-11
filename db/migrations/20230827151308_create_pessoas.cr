@@ -19,6 +19,14 @@ class CreatePessoas::V20230827151308 < Avram::Migrator::Migration::V1
     ) STORED
     SQL
 
+    execute <<-SQL
+    CREATE INDEX IF NOT EXISTS index_pessoas_on_id ON public.pessoas (id);
+    SQL
+
+    execute <<-SQL
+    CREATE UNIQUE INDEX IF NOT EXISTS index_pessoas_on_apelido ON public.pessoas USING btree (apelido);
+    SQL
+
     # run lucky db.schema.dump and modify the .sql file to have CREATE INDEX CONCURRENTLY
     execute <<-SQL
     CREATE INDEX IF NOT EXISTS IDX_PESSOAS_SEARCHABLE ON PESSOAS
