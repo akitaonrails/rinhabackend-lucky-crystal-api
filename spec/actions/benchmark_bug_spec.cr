@@ -2,6 +2,7 @@ require "../spec_helper"
 
 describe Api::Pessoas::Show do
   it "should generate urls" do
+    puts "measuring:"
     elapsed_time1 = Time.measure do
       url = ""
       100_000.times do |i|
@@ -9,6 +10,14 @@ describe Api::Pessoas::Show do
       end
     end
     puts "Api URL: #{elapsed_time1.milliseconds}"
+
+    elapsed_time4 = Time.measure do
+      url = ""
+      100_000.times do |i|
+        url = Api::Pessoas::Show.path("abc#{i}")
+      end
+    end
+    puts "Api PATH: #{elapsed_time4.milliseconds}"
 
     elapsed_time2 = Time.measure do
       100_000.times do |i|
