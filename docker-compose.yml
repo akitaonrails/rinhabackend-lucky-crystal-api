@@ -25,8 +25,6 @@ services:
     depends_on:
       - redis
       - postgres
-    ports:
-      - "3000:3000"
     network_mode: host
     ulimits:
       nproc: 1000000
@@ -65,8 +63,6 @@ services:
     depends_on:
       - api1
       - api2
-    ports:
-      - "9999:9999"
     network_mode: host
     ulimits:
       nproc: 1000000
@@ -92,8 +88,6 @@ services:
       timeout: 5s
       retries: 20
       start_period: 10s
-    ports:
-      - "5432:5432"
     network_mode: host
     deploy:
       resources:
@@ -105,8 +99,6 @@ services:
     image: docker.io/redis:latest
     hostname: redis
     command: redis-server --save "" --appendonly no --maxclients 20000
-    ports:
-      - "6379:6379"
     network_mode: host
     deploy:
       resources:
