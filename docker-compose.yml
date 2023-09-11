@@ -4,10 +4,10 @@ services:
     #image: docker.io/akitaonrails/rinhabackend-crystal:latest
     build: .
     environment:
-      DATABASE_URL: postgres://postgres:password@postgres:5432/postgres
-      MAX_POOL_SIZE: 123
-      BATCH_INSERT_SIZE: 50
-      REDIS_HOST: redis
+      DATABASE_URL: postgres://postgres:password@localhost:5432/postgres
+      MAX_POOL_SIZE: 200
+      BATCH_INSERT_SIZE: 100
+      REDIS_HOST: localhost
       REDIS_POOL_SIZE: 9995
       REDIS_POOL_TIMEOUT: 1.0
       DEV_HOST: "0.0.0.0"
@@ -25,8 +25,9 @@ services:
     depends_on:
       - redis
       - postgres
-    expose:
-      - "3000"
+    ports:
+      - "3000:3000"
+    network_mode: host
     ulimits:
       nproc: 1000000
       nofile:
@@ -41,6 +42,20 @@ services:
   api2:
     <<: *api
     hostname: api2
+    environment:
+      DATABASE_URL: postgres://postgres:password@localhost:5432/postgres
+      MAX_POOL_SIZE: 200
+      BATCH_INSERT_SIZE: 100
+      REDIS_HOST: localhost
+      REDIS_POOL_SIZE: 9995
+      REDIS_POOL_TIMEOUT: 1.0
+      DEV_HOST: "0.0.0.0"
+      PORT: 3001
+      LUCKY_ENV: production
+      APP_DOMAIN: http://0.0.0.0:9999
+      # the following keys are bogus, just so lucky don't complain on startup
+      SECRET_KEY_BASE: 31IAERHMv/PendY5eVzMXQ5DfpjgxQ80gZyzEturFWk=
+      SEND_GRID_KEY: 8LsM0faiYM2Ydw/de19PBRwkuPW3wETnzj0CY9wsxjA=
 
   nginx: # Load Balancer
     image: docker.io/nginx:latest
@@ -52,6 +67,7 @@ services:
       - api2
     ports:
       - "9999:9999"
+    network_mode: host
     ulimits:
       nproc: 1000000
       nofile:
@@ -69,13 +85,16 @@ services:
       POSTGRES_PASSWORD: password
     volumes:
       - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
-      - ./postgresql.conf:/docker-entrypoint-initdb.d/postgresql.conf
+    command: postgres -c "max_connections=450"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready"]
       interval: 5s
       timeout: 5s
       retries: 20
       start_period: 10s
+    ports:
+      - "5432:5432"
+    network_mode: host
     deploy:
       resources:
         limits:
@@ -86,6 +105,9 @@ services:
     image: docker.io/redis:latest
     hostname: redis
     command: redis-server --save "" --appendonly no --maxclients 20000
+    ports:
+      - "6379:6379"
+    network_mode: host
     deploy:
       resources:
         limits:
