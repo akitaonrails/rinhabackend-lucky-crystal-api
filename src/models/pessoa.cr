@@ -28,9 +28,9 @@ class Pessoa < BaseModel
       apelido: params.get("apelido"),
       nome: params.get("nome"),
       nascimento: nil,
-      stack: params.get("stack")
+      stack: params.get?("stack")
 
-    pessoa.nascimento_as_string = params.get("nascimento")
+    pessoa.nascimento_as_string = params.get?("nascimento")
     pessoa
   end
 

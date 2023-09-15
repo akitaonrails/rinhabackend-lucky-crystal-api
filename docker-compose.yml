@@ -13,7 +13,7 @@ services:
       DEV_HOST: "0.0.0.0"
       PORT: 3000
       LUCKY_ENV: production
-      APP_DOMAIN: http://0.0.0.0:9999
+      APP_DOMAIN: http://localhost:9999
       # the following keys are bogus, just so lucky don't complain on startup
       SECRET_KEY_BASE: 31IAERHMv/PendY5eVzMXQ5DfpjgxQ80gZyzEturFWk=
       SEND_GRID_KEY: 8LsM0faiYM2Ydw/de19PBRwkuPW3wETnzj0CY9wsxjA=
@@ -50,7 +50,7 @@ services:
       DEV_HOST: "0.0.0.0"
       PORT: 3001
       LUCKY_ENV: production
-      APP_DOMAIN: http://0.0.0.0:9999
+      APP_DOMAIN: http://localhost:9999
       # the following keys are bogus, just so lucky don't complain on startup
       SECRET_KEY_BASE: 31IAERHMv/PendY5eVzMXQ5DfpjgxQ80gZyzEturFWk=
       SEND_GRID_KEY: 8LsM0faiYM2Ydw/de19PBRwkuPW3wETnzj0CY9wsxjA=
